@@ -12,7 +12,7 @@ const FRESH: Record<string, { it: string; en: string }> = {
 export function SourceTag({ meta, label }: { meta: Meta | null; label?: string }) {
   const { lang } = usePrefs();
   if (!meta) return null;
-  const src = meta.source === "alpaca" ? "Alpaca" : meta.source === "demo" ? "Demo" : "—";
+  const src = ({ alpaca: "Alpaca", demo: "Demo", gdelt: "GDELT", worldbank: lang === "it" ? "Banca Mondiale" : "World Bank", none: "—" } as const)[meta.source];
   return (
     <span className="source-tag" data-f={meta.freshness} title={meta.note ?? ""}>
       <i aria-hidden />

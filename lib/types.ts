@@ -2,7 +2,7 @@
 export type Freshness = "realtime" | "delayed" | "historical" | "demo" | "unavailable";
 
 export type Meta = {
-  source: "alpaca" | "demo" | "none";
+  source: "alpaca" | "demo" | "gdelt" | "worldbank" | "none";
   freshness: Freshness;
   asOf: string; // ISO time the server fetched it
   note?: string;

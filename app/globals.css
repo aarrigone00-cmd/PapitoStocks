@@ -366,3 +366,27 @@ a { color: inherit; }
 input[type="range"] { accent-color: var(--accent); width: 100%; }
 .glossary-term { scroll-margin-top: 140px; }
 .glossary-term:target { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* ---------- world map ---------- */
+.worldmap { position: relative; width: 100%; background: var(--surface); border: 1px solid var(--rule); }
+.wm-sphere { fill: color-mix(in srgb, var(--surface-2) 45%, var(--surface)); stroke: var(--rule); }
+.wm-grat { fill: none; stroke: var(--rule); stroke-width: .4; opacity: .7; }
+.wm-country { stroke: var(--surface); stroke-width: .5; cursor: pointer; transition: fill .4s ease, opacity .2s; }
+.wm-country:hover, .wm-country:focus { stroke: var(--ink); stroke-width: .9; outline: none; }
+.wm-country.sel { stroke: var(--accent); stroke-width: 1.6; }
+.wm-country.nodata { cursor: default; }
+.wm-route { fill: none; stroke-width: 1.6; stroke-dasharray: 5 6; animation: wmflow 1.4s linear infinite; pointer-events: stroke; }
+.wm-route.goods { stroke: var(--forest); }
+.wm-route.energy { stroke: #A8761F; }
+:root[data-theme="dark"] .wm-route.goods { stroke: #CFE3D6; }
+:root[data-theme="dark"] .wm-route.energy { stroke: #E3B86B; }
+@keyframes wmflow { to { stroke-dashoffset: -22; } }
+.wm-choke { cursor: pointer; }
+.wm-choke .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 1.2; }
+.wm-choke .pulse { fill: none; stroke: var(--accent); stroke-width: 1; transform-origin: center; animation: wmpulse 2.4s ease-out infinite; }
+@keyframes wmpulse { from { opacity: .9; transform: scale(.4); } to { opacity: 0; transform: scale(1.6); } }
+.wm-tip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--accent); padding: .55rem .7rem; font-size: .8rem; min-width: 180px; box-shadow: 0 10px 30px rgba(0,0,0,.15); z-index: 3; }
+.wm-legend { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; font-size: .75rem; color: var(--muted); margin-top: .6rem; }
+.wm-legend .ramp { width: 180px; height: .6rem; border: 1px solid var(--rule); }
+.layer-list button { display: flex; justify-content: space-between; gap: .6rem; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; padding: .5rem .7rem; cursor: pointer; font: inherit; font-size: .88rem; color: inherit; }
+.layer-list button[aria-pressed="true"] { background: var(--surface-2); border-left-color: var(--accent); }
