@@ -19,6 +19,7 @@ type WbKey = (typeof WB_KEYS)[number];
 type LayerId = "news" | "tension" | "risk" | "market" | "market1y" | "gdp" | "infl" | "unemp" | "debt" | "ca" | "rate" | "fdi" | "exposure";
 type Scale = { kind: "seq"; max: number; tone: "bad" | "neutral" } | { kind: "div"; span: number };
 
+const MIN_YEAR = new Date().getFullYear() - 6;
 const INTEL_TOPICS: TopicId[] = ["geopolitics", "trade", "elections", "energy", "macro"];
 
 const LAYERS: { id: LayerId; it: string; en: string; scale: Scale; unit: string; src: { it: string; en: string } }[] = [
@@ -98,8 +99,9 @@ export default function WorldMapPage() {
       const b = bars[etf];
       if (b && b.length > 100) v.market1y[iso] = ((q?.price ?? b[b.length - 1].c) / b[0].c - 1) * 100;
     }
+    // Ignore figures older than 6 years: World Bank's "latest" can be decades old for some series.
     for (const k of ["gdp", "infl", "unemp", "debt", "ca", "rate", "fdi"] as const)
-      for (const [iso, x] of Object.entries(wb.data[k] ?? {})) v[k][iso] = x.value;
+      for (const [iso, x] of Object.entries(wb.data[k] ?? {})) if (Number(x.year) >= MIN_YEAR) v[k][iso] = x.value;
     // Transparent watch index (0–8)
     const isos = new Set([...Object.keys(wb.data.infl ?? {}), ...Object.keys(v.tension)]);
     for (const iso of isos) {
@@ -206,13 +208,13 @@ export default function WorldMapPage() {
                     const x = ind(k);
                     return (
                       <div key={k}><span>{label}</span>
-                        <span><b className="num">{x == null ? "—" : f === "usd" ? usd(x.value, lang, 0) : f === "n" ? compact(x.value, lang) : pct(x.value, lang, k === "gdp" || k === "ca")}</b>{x && <span className="muted tiny"> · {x.year}</span>}</span>
+                        <span style={x && Number(x.year) < MIN_YEAR ? { opacity: .55 } : undefined}><b className="num">{x == null ? "—" : f === "usd" ? usd(x.value, lang, 0) : f === "n" ? compact(x.value, lang) : pct(x.value, lang, k === "gdp" || k === "ca")}</b>{x && <span className={`tiny ${Number(x.year) < MIN_YEAR ? "down" : "muted"}`}> · {x.year}{Number(x.year) < MIN_YEAR ? (L ? " (dato vecchio)" : " (old data)") : ""}</span>}</span>
                       </div>
                     );
                   })}
                 </div>
               )}
-              <p className="tiny muted">{L ? "Dati annuali della Banca Mondiale: l'ultimo anno disponibile cambia da Paese a Paese e può avere uno o due anni di ritardo." : "Annual World Bank data: the latest available year varies by country and may lag by a year or two."}</p>
+              <p className="tiny muted">{L ? `Dati annuali della Banca Mondiale: l'ultimo anno disponibile cambia da Paese a Paese. I dati precedenti al ${MIN_YEAR} sono segnalati come vecchi ed esclusi dalla mappa.` : `Annual World Bank data: the latest available year varies by country. Figures before ${MIN_YEAR} are flagged as old and left off the map.`}</p>
             </section>
             <section className="panel span-3 vrule">
               <PanelHead kicker={L ? "Borsa" : "Stock market"} title={etf ? etf : "—"} meta={etf ? quotes.meta : undefined} />

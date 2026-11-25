@@ -5,7 +5,7 @@ import { GDELT_TOPICS, cleanTitle, dedupeKey, detectCompanies, detectCountries, 
 // GDELT DOC 2.0 API: free, no key, global news monitoring in 65 languages.
 // Rate limit: one request every 5 seconds per IP. We therefore cache each topic
 // for 20 minutes in Next's shared data cache and retry politely on HTTP 429.
-const BASE = "https://api.gdeltproject.org/api/v2/doc/doc";
+const BASE = process.env.GDELT_BASE_URL || "https://api.gdeltproject.org/api/v2/doc/doc"; // override only for local testing
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 type Raw = { url: string; title: string; seendate: string; socialimage?: string; domain: string; language: string; sourcecountry: string };

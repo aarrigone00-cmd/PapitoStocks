@@ -74,8 +74,8 @@ export default function Overview() {
     <div className="page">
       <header className="masthead">
         <div>
-          <div className="kicker">{longDate(new Date(), lang)}</div>
-          <h1 className="h1" style={{ marginTop: ".4rem" }}>{greet}.</h1>
+          <div className="kicker" suppressHydrationWarning>{longDate(new Date(), lang)}</div>
+          <h1 className="h1" style={{ marginTop: ".4rem" }} suppressHydrationWarning>{greet}.</h1>
           <p className="lede" style={{ margin: ".4rem 0 0" }}>{t.tagline}</p>
         </div>
         <div style={{ display: "flex", gap: "1.6rem", alignItems: "flex-end" }}>

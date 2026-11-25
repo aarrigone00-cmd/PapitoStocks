@@ -111,7 +111,7 @@ function Intelligence() {
     <div className="page">
       <header className="masthead">
         <div>
-          <div className="kicker">{L ? "Intelligence globale" : "Global intelligence"} · {new Date().toLocaleDateString(L ? "it-IT" : "en-US", { weekday: "long", day: "numeric", month: "long" })}</div>
+          <div className="kicker" suppressHydrationWarning>{L ? "Intelligence globale" : "Global intelligence"} · {new Date().toLocaleDateString(L ? "it-IT" : "en-US", { weekday: "long", day: "numeric", month: "long" })}</div>
           <h1 className="h1">{L ? "Il mondo, oggi" : "The world, today"}</h1>
           <p className="lede" style={{ margin: ".4rem 0 0" }}>{L ? "Politica, guerre, commercio, banche centrali, energia, tecnologia, clima: ciò che può muovere i mercati, da migliaia di testate." : "Politics, wars, trade, central banks, energy, technology, climate: what can move markets, from thousands of outlets."}</p>
         </div>
@@ -186,10 +186,13 @@ function Intelligence() {
           <section className="panel span-8">
             <PanelHead kicker={L ? "In primo piano" : "Leading"} title={L ? "Le notizie che contano di più" : "The stories that matter most"} />
             {filtered[0] && <Story it={filtered[0]} size="lg" mine={isMine(filtered[0])} />}
+            <div className="grid" style={{ rowGap: 0, marginTop: ".4rem" }}>
+              {filtered.slice(1, 5).map(it => <div key={it.id} className="span-6"><Story it={it} size="sm" mine={isMine(it)} /></div>)}
+            </div>
           </section>
           <aside className="panel span-4 vrule">
             <PanelHead kicker={L ? "Anche" : "Also"} title={L ? "Da non perdere" : "Don't miss"} />
-            {filtered.slice(1, 6).map(it => <Story key={it.id} it={it} size="sm" mine={isMine(it)} />)}
+            {filtered.slice(5, 11).map(it => <Story key={it.id} it={it} size="sm" mine={isMine(it)} />)}
           </aside>
           {TOPICS.filter(t => t.id !== "markets" || alpacaMeta).map(t => {
             const list = filtered.filter(i => i.topics[0] === t.id || (i.origin === "alpaca" && t.id === "markets")).slice(0, 4);
