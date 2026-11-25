@@ -1,59 +1,43 @@
-# Le mie azioni (My Stocks): a simple, large-print stock app
+# Papitostocks
 
-A big-text, plain-language stock app for Android phones and Windows computers, built for use in **Italy**:
+**Private Wealth & Global Intelligence** · *Understand the world. Understand the markets.*
 
-- Opens in **Italian**, with an English switch in *Impostazioni* (Settings).
-- Prices are in US dollars, with an **approximate euro amount** next to them (daily European Central Bank rate, free, no key).
-- US market hours are shown in **local time** (open 15:30–22:00 in Italy).
-- Only US-listed stocks are available, which includes Italian companies like Ferrari (RACE), Stellantis (STLA) and Eni (E).
-- The scam-warning section points to Consob, Italy's market regulator.
-It uses an **Alpaca paper-trading account**, so all trades are practice money at real prices.
+A private investment and market-intelligence app, built on Alpaca paper trading. Italian and English, light and dark mode.
 
-**Screens (Italian names):** Home · Mercato · Azioni · Impara · Opzioni (plus Storico and Consigli, reached from Home).
+- Technical plan, costs and roadmap: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- Database schema: [`supabase/schema.sql`](supabase/schema.sql)
 
-**Screens:**
-- **Home:** account value, a chart of the account over time, what you own, and buttons for Market, Tips and Trades.
-- **Mercato (Market):** a plain-language "weather report" for the day, the 3 main indexes, sectors, today's biggest movers, long-term market history (biggest drop and recovery), and famous crashes.
-- **Azioni (Stocks):** search by company name, a watch list, and stock pages with charts, a one-line company description and "if you had invested $1,000…".
-- **Consigli (Tips):** rule-based learning tips about the practice account (diversification, cash, big gains or losses, trading too often) plus a beginner plan. These are not personal financial advice.
-- **Impara (Learn):** basics, good habits and scam warnings.
-- **Opzioni (Settings):** language, text size, high contrast and passcode.
+## Go live on Vercel (existing project)
 
-## How it works
+The Vercel project that hosted the old app deploys this one automatically when `main` changes. `vercel.json` tells Vercel it is a Next.js app.
 
-```
-Phone / PC browser  →  your website (index.html, app.js)
-                    →  /api/alpaca  (small server function that holds the Alpaca keys)
-                    →  Alpaca paper-trading + market data
-```
+1. Vercel → your project → **Settings → Environment Variables**. Make sure these exist:
+   | Name | Value |
+   |---|---|
+   | `ALPACA_KEY_ID` | Alpaca **paper** Key ID (already added) |
+   | `ALPACA_SECRET_KEY` | Alpaca **paper** Secret (already added) |
+   | `APP_PASSCODE` | The access code you and your father will type |
+   | `SESSION_SECRET` | A long random string (40+ characters, just mash the keyboard) |
+2. **Deployments → ⋯ → Redeploy** so the new variables are picked up.
+3. Open the site: you'll see the Papitostocks login page. Enter the passcode.
+4. If the red **DEMO** badge shows in the top bar, the Alpaca keys aren't being read: check their names in step 1.
 
-The keys stay on the server, so nobody can read them from the phone. The server function talks
-**only** to `paper-api.alpaca.markets`, so it cannot place real-money trades.
+### If the deploy fails
+Vercel → Settings → **Build and Deployment**: Framework Preset should be **Next.js**, and Build/Output/Install commands should be empty (default). Then redeploy.
 
-If the server isn't set up, the app runs with **sample numbers**, which is handy for previewing.
-
-## Setup (about 15 minutes, free)
-
-1. **Get Alpaca keys.** Sign up at https://alpaca.markets (you only need an email for a paper-only account; you set it up, not Dad). In the dashboard, switch to
-   **Paper Trading**, then click **Generate New Keys** under *API Keys*. Copy the *Key ID* and the *Secret Key*.
-2. **Put this folder on GitHub** (a new private repo is fine).
-3. **Deploy on Vercel** (free): https://vercel.com → *Add New → Project* → import the repo → keep default settings.
-4. In Vercel go to **Settings → Environment Variables** and add:
-   - `ALPACA_KEY_ID`: your paper Key ID
-   - `ALPACA_SECRET_KEY`: your paper Secret Key
-   - `APP_PASSCODE` (optional, recommended): any word or number. Enter it once in the app's Settings.
-     This stops strangers who find the link from using the account.
-5. Click **Redeploy**. Open the `https://….vercel.app` link: the yellow "sample numbers" banner should be gone.
-
-## Putting it on Dad's devices
-
-- **Android (Chrome):** open the link → ⋮ menu → **Add to Home screen**. It opens like a regular app.
-- **Windows (Edge/Chrome):** open the link → ⋯ menu → **Apps → Install this site as an app**, or pin it to the taskbar.
-- In the app's **Settings**, pick *Larger* or *Largest* text if needed.
-
-## Preview locally
+## Run it on your own computer (optional)
 
 ```bash
-python3 -m http.server 8000
+npm install
+cp .env.example .env.local   # then fill in the values
+npm run dev                  # open http://localhost:3000
 ```
-Then open http://localhost:8000 (sample mode).
+
+Without Alpaca keys the app runs in clearly labelled **demo mode**.
+
+## Safety
+
+- Paper trading only: the code can only reach `paper-api.alpaca.markets`. Live trading is not wired up (Phase 7).
+- All keys stay on the server; the browser never receives them.
+- Orders need a review dialog and confirmation. They are checked for size limits (`MAX_ORDER_NOTIONAL`, `MAX_ORDER_QTY`) and buying power, and get a unique ID so they can't be sent twice. Set `TRADING_DISABLED=true` to stop all orders instantly.
+- AI features (Phase 4) will never be able to place orders.
