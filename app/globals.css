@@ -339,3 +339,30 @@ a { color: inherit; }
   .login { grid-template-columns: 1fr; }
   .login-art { min-height: 220px; }
 }
+
+/* ---------- bar lists, correlation matrix, tabs ---------- */
+.bar-row2 { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) 4.2rem; gap: .8rem; align-items: center; padding: .42rem 0; border-bottom: 1px solid var(--rule); }
+.bar-row2:last-child { border-bottom: 0; }
+.bar2-track { position: relative; height: .6rem; background: var(--surface-2); }
+.bar2 { position: absolute; top: 0; bottom: 0; }
+.bar2.neutral { background: var(--forest); }
+:root[data-theme="dark"] .bar2.neutral { background: var(--accent); }
+.bar2.pos { background: var(--up); } .bar2.neg { background: var(--down); }
+.bar2-axis { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--rule-strong); }
+.corr { border-collapse: collapse; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.corr th { font-size: .66rem; letter-spacing: .06em; color: var(--muted); padding: .35rem .45rem; font-weight: 600; text-align: center; }
+.corr td { width: 3.4rem; height: 2.3rem; text-align: center; border: 1px solid var(--bg); }
+.tabs-line { display: flex; gap: 0; border-bottom: 1px solid var(--rule-strong); margin-bottom: 1.8rem; overflow-x: auto; }
+.tabs-line button {
+  background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; white-space: nowrap;
+  font: 600 .74rem/1 var(--font-ui); letter-spacing: .12em; text-transform: uppercase; padding: .9rem 1.1rem .75rem;
+}
+.tabs-line button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.finding { display: grid; grid-template-columns: 2.4rem 1fr; gap: .9rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); }
+.finding .sev { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; font-family: var(--font-display); font-size: 1.3rem; border: 1px solid currentColor; }
+.method dt { font-weight: 600; margin-top: .9rem; }
+.method dd { margin: .2rem 0 0; color: var(--ink-2); font-size: .9rem; }
+.range-row { display: grid; grid-template-columns: 1fr auto; gap: .5rem; align-items: center; }
+input[type="range"] { accent-color: var(--accent); width: 100%; }
+.glossary-term { scroll-margin-top: 140px; }
+.glossary-term:target { background: color-mix(in srgb, var(--accent) 14%, transparent); }

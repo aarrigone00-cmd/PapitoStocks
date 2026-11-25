@@ -67,6 +67,13 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/data/[resour
         const range = q.get("range") ?? "1Y";
         return live ? ok(await A.bars(sym, range), meta("alpaca", "historical", "IEX, split-adjusted")) : ok(D.demoBars(sym, range), demoMeta);
       }
+      case "multibars": {
+        const syms = symbolsParam(q.get("symbols"), 30);
+        const range = q.get("range") ?? "1Y";
+        if (!["1Y", "5Y", "MAX"].includes(range)) return fail(Object.assign(new Error("Invalid range"), { status: 400 }));
+        return live ? ok(await A.barsMulti(syms, range), meta("alpaca", "historical", "IEX, split-adjusted (dividends not included)"))
+          : ok(Object.fromEntries(syms.map(s => [s, D.demoBars(s, range)])), demoMeta);
+      }
       case "news": {
         const syms = q.get("symbols") ? symbolsParam(q.get("symbols"), 50) : null;
         return live ? ok(await A.news(syms, Number(q.get("limit") ?? 40)), meta("alpaca", "realtime", "Alpaca News API (Benzinga)")) : ok(D.demoNews(), demoMeta);

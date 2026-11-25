@@ -105,8 +105,8 @@ Keys go **only** in Vercel → Settings → Environment Variables (and `.env.loc
 | 2 Research | Financial statements, valuation multiples, peers, comparisons, screener (FMP + SEC EDGAR) | |
 | 3 Global intelligence | GDELT + official sources, de-duplication, world map, macro dashboard, calendar, scheduled news collection | |
 | 4 AI | Claude analyst, news-impact analysis, daily newspaper (+ audio), Investment Committee, Ask the News, Connect the Dots | |
-| 5 Analytics | Risk Radar, Sharpe/Sortino/beta/VaR, valuation lab, simulations, backtesting, shock simulator | |
-| 6 Personal | Alerts, journal, library, academy, glossary everywhere | |
+| 5 Analytics | **Done:** Risk Radar (concentration, sectors, regions, USD exposure, volatility, beta, VaR/ES, Sharpe/Sortino/alpha, correlations, rate/inflation sensitivity) and Simulation Lab (compound interest, Monte Carlo, historical crashes, 11 shock scenarios, backtest). **Still to do:** valuation lab (needs FMP), Opportunity Radar | Partly done |
+| 6 Personal | **Done:** Financial Academy (10 lessons, 40-term glossary). **Still to do:** alerts, journal, library, clickable glossary terms everywhere | Partly done |
 | 7 Live trading | Security review, separate live keys, explicit authorisation, limits, kill switch | Only with your explicit go-ahead |
 
 ## 7. Folder structure

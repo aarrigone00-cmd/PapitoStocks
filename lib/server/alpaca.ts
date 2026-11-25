@@ -223,6 +223,24 @@ export async function bars(symbol: string, range: string): Promise<Bar[]> {
   return out;
 }
 
+/** Daily/weekly bars for several symbols in one request (paged). */
+export async function barsMulti(symbols: string[], range: string): Promise<Record<string, Bar[]>> {
+  const r = RANGES[range] ?? RANGES["1Y"];
+  const start = new Date(Date.now() - r.days * 864e5).toISOString();
+  const out: Record<string, Bar[]> = Object.fromEntries(symbols.map(s => [s, []]));
+  let token: string | undefined;
+  for (let page = 0; page < 20; page++) {
+    const qs = new URLSearchParams({ symbols: symbols.join(","), timeframe: r.tf, start, feed: "iex", limit: "10000", adjustment: "split" });
+    if (token) qs.set("page_token", token);
+    const d = await call<{ bars?: Record<string, { t: string; o: number; h: number; l: number; c: number; v: number }[]>; next_page_token?: string | null }>(
+      DATA, `/v2/stocks/bars?${qs}`);
+    for (const [sym, list] of Object.entries(d.bars ?? {})) out[sym]?.push(...list.map(b => ({ t: b.t, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v })));
+    token = d.next_page_token ?? undefined;
+    if (!token) break;
+  }
+  return out;
+}
+
 export async function news(symbols: string[] | null, limit = 40): Promise<NewsItem[]> {
   const qs = new URLSearchParams({ limit: String(Math.min(limit, 50)), sort: "desc", include_content: "false" });
   if (symbols?.length) qs.set("symbols", symbols.join(","));
