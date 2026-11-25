@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Le mie azioni</title>
+  <meta name="theme-color" content="#1d4e89">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="title">Le mie azioni</h1>
+    <div id="market" class="market-pill" aria-live="polite"></div>
+  </header>
+
+  <div id="demo-banner" class="banner" hidden></div>
+
+  <main id="view" tabindex="-1"></main>
+
+  <nav class="tabs" aria-label="Menu">
+    <a href="#home" data-tab="home"><span class="ico" aria-hidden="true">🏠</span><span data-t="tabHome">Home</span></a>
+    <a href="#stocks" data-tab="stocks"><span class="ico" aria-hidden="true">📈</span><span data-t="tabStocks">Azioni</span></a>
+    <a href="#history" data-tab="history"><span class="ico" aria-hidden="true">🧾</span><span data-t="tabHistory">Storico</span></a>
+    <a href="#learn" data-tab="learn"><span class="ico" aria-hidden="true">💡</span><span data-t="tabLearn">Impara</span></a>
+    <a href="#settings" data-tab="settings"><span class="ico" aria-hidden="true">⚙️</span><span data-t="tabSettings">Impostazioni</span></a>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
