@@ -76,6 +76,7 @@ const RANGES = {
   "6M": { days: 183, tf: "1Day" },
   "1Y": { days: 366, tf: "1Day" },
   "5Y": { days: 5 * 366, tf: "1Week" },
+  "MAX": { days: 11 * 366, tf: "1Week" },
 };
 
 async function handle(req) {
@@ -99,6 +100,15 @@ async function handle(req) {
 
     case "positions":
       return call(TRADE, "/v2/positions");
+
+    case "history": {
+      const period = ["1W", "1M", "3M", "1A"].includes(q.period) ? q.period : "1M";
+      const tf = period === "1W" ? "1H" : "1D";
+      const h = await call(TRADE, `/v2/account/portfolio/history?period=${period}&timeframe=${tf}`);
+      return (h.timestamp || [])
+        .map((t, i) => ({ t: new Date(t * 1000).toISOString(), c: h.equity ? h.equity[i] : null }))
+        .filter(x => x.c);
+    }
 
     case "orders":
       return call(TRADE, "/v2/orders?status=all&limit=15&direction=desc");

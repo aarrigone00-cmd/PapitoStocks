@@ -9,10 +9,15 @@ A big-text, plain-language stock app for Android phones and Windows computers, b
 - The scam-warning section points to Consob, Italy's market regulator.
 It uses an **Alpaca paper-trading account**, so all trades are practice money at real prices.
 
-**Screens (Italian names):** Home · Azioni · Storico · Impara · Impostazioni.
+**Screens (Italian names):** Home · Mercato · Azioni · Impara · Opzioni (plus Storico and Consigli, reached from Home).
 
-**Screens:** Home (account value, what you own) · Stocks (search by company name, watch list, charts)
-· History (past trades) · Learn (basics, good habits, scam warnings) · Settings (text size, high contrast).
+**Screens:**
+- **Home:** account value, a chart of the account over time, what you own, and buttons for Market, Tips and Trades.
+- **Mercato (Market):** a plain-language "weather report" for the day, the 3 main indexes, sectors, today's biggest movers, long-term market history (biggest drop and recovery), and famous crashes.
+- **Azioni (Stocks):** search by company name, a watch list, and stock pages with charts, a one-line company description and "if you had invested $1,000…".
+- **Consigli (Tips):** rule-based learning tips about the practice account (diversification, cash, big gains or losses, trading too often) plus a beginner plan. These are not personal financial advice.
+- **Impara (Learn):** basics, good habits and scam warnings.
+- **Opzioni (Settings):** language, text size, high contrast and passcode.
 
 ## How it works
 

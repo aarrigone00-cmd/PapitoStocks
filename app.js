@@ -18,8 +18,8 @@ const TEXT = {
   it: {
     appTitle: "Le mie azioni",
     demo: "Stai vedendo <strong>numeri di esempio</strong>. I prezzi veri appaiono quando l'app è configurata.",
-    tabHome: "Home", tabStocks: "Azioni", tabHistory: "Storico", tabLearn: "Impara", tabSettings: "Impostazioni",
-    open: "🟢 Borsa USA aperta", closed: "🔴 Borsa USA chiusa",
+    tabHome: "Home", tabStocks: "Azioni", tabHistory: "Storico", tabLearn: "Impara", tabSettings: "Opzioni",
+    open: "🟢 Borsa aperta", closed: "🔴 Borsa chiusa",
     morning: "Buongiorno", afternoon: "Buon pomeriggio", evening: "Buonasera",
     worth: "Il tuo conto di prova vale",
     cash: "Contanti disponibili",
@@ -212,6 +212,197 @@ const TEXT = {
 };
 const T = () => TEXT[LANG];
 
+// ---------- extra texts: market, history, advice, companies ----------
+const COMPANY_NAMES = {
+  AAPL: "Apple", MSFT: "Microsoft", AMZN: "Amazon", GOOGL: "Alphabet (Google)", NVDA: "NVIDIA", META: "Meta (Facebook)",
+  TSLA: "Tesla", NFLX: "Netflix", KO: "Coca-Cola", PEP: "PepsiCo", MCD: "McDonald's", DIS: "Disney", NKE: "Nike",
+  V: "Visa", JPM: "JPMorgan Chase", JNJ: "Johnson & Johnson", PFE: "Pfizer", WMT: "Walmart", COST: "Costco",
+  PG: "Procter & Gamble", XOM: "Exxon Mobil", BA: "Boeing", RACE: "Ferrari", STLA: "Stellantis", E: "Eni",
+  SPY: "S&P 500 (SPY)", DIA: "Dow Jones (DIA)", QQQ: "Nasdaq 100 (QQQ)",
+};
+const POPULAR = ["AAPL", "MSFT", "AMZN", "GOOGL", "NVDA", "META", "TSLA", "NFLX", "KO", "PEP", "MCD", "DIS", "NKE", "V",
+  "JPM", "JNJ", "PFE", "WMT", "COST", "PG", "XOM", "BA", "RACE", "STLA", "E"];
+const INDEXES = ["SPY", "DIA", "QQQ"];
+const SECTORS = ["XLK", "XLV", "XLF", "XLE", "XLP", "XLY", "XLI", "XLU", "XLRE", "XLC", "XLB"];
+
+Object.assign(TEXT.it, {
+  tabMarket: "Mercato",
+  ranges: { "1M": "1 mese", "6M": "6 mesi", "1Y": "1 anno", "5Y": "5 anni", "MAX": "Tutto" },
+  chartSentence: (r, name, a, b, up, p, from) => {
+    const when = { "1M": "Nell'ultimo mese", "6M": "Negli ultimi 6 mesi", "1Y": "Nell'ultimo anno", "5Y": "Negli ultimi 5 anni", "MAX": `Dal ${from} a oggi` }[r];
+    return `${when}, ${name} è passata da <b>${a}</b> a <b>${b}</b>: ` +
+      (up ? `<b class="t-up">in rialzo del ${p}</b>.` : `<b class="t-down">in calo del ${p}</b>.`);
+  },
+  ifInvested: (amt, val) => `💡 Se avessi investito <b>${amt}</b> all'inizio di questo periodo, oggi avresti circa <b>${val}</b>.`,
+  aboutCompany: "Che cosa fa questa azienda",
+  marketTitle: "Il mercato oggi",
+  moods: [["⛈️", "Giornata difficile"], ["🌧️", "Giornata negativa"], ["⛅", "Giornata tranquilla"], ["🌤️", "Giornata positiva"], ["☀️", "Giornata molto positiva"]],
+  marketSummary: (up, p) => `Oggi le 500 più grandi aziende americane, tutte insieme, sono ${up ? "in rialzo" : "in calo"} del <b>${p}</b>.`,
+  flatSummary: "Oggi le 500 più grandi aziende americane, tutte insieme, sono quasi ferme.",
+  normalMove: "Movimenti così sono normali e succedono quasi ogni giorno.",
+  bigMove: "È un movimento grande: succede qualche volta l'anno. Nel lungo periodo i singoli giorni contano poco.",
+  lastSession: "La Borsa è chiusa: questi sono i dati dell'ultima giornata.",
+  indexesTitle: "I tre “termometri” della Borsa americana",
+  indexes: { SPY: ["S&P 500", "Le 500 aziende americane più grandi. È il termometro più usato."],
+    DIA: ["Dow Jones", "30 aziende storiche e famose, come Coca-Cola e McDonald's."],
+    QQQ: ["Nasdaq 100", "100 grandi aziende, soprattutto di tecnologia."] },
+  sectorsTitle: "Come vanno i settori",
+  sectorsHint: "Un settore è un gruppo di aziende che fanno cose simili.",
+  sectors: { XLK: "💻 Tecnologia", XLV: "🏥 Salute", XLF: "🏦 Banche e finanza", XLE: "⛽ Energia e petrolio", XLP: "🛒 Beni di tutti i giorni",
+    XLY: "🛍️ Shopping e auto", XLI: "🏭 Industria", XLU: "💡 Luce, gas e acqua", XLRE: "🏢 Immobili", XLC: "📱 Comunicazioni e media", XLB: "⛏️ Materiali" },
+  moversTitle: "Aziende famose: chi si è mosso di più oggi",
+  winners: "▲ Le migliori", losers: "▼ Le peggiori",
+  longTitle: "La storia del mercato",
+  longSentence: (from, a, b, up, p) => `Dal ${from} a oggi l'S&P 500 è passato da <b>${a}</b> a <b>${b}</b>: ` +
+    (up ? `<b class="t-up">+${p}</b>.` : `<b class="t-down">−${p}</b>.`),
+  thousand: (from, v) => `💡 <b>1.000 $</b> investiti a ${from} oggi varrebbero circa <b>${v}</b>.`,
+  drawdown: (p, when) => `📉 Il calo più grande in questo periodo è stato del <b>${p}</b> (${when}).`,
+  recovered: m => ` Poi il mercato ha recuperato tutto in circa <b>${m} mesi</b>.`,
+  notRecovered: " Non ha ancora recuperato del tutto.",
+  lessonLong: "La lezione: nel breve periodo il mercato sale e scende, ma nel lungo periodo è cresciuto. Per questo conta la pazienza.",
+  momentsTitle: "Momenti famosi della storia",
+  moments: [
+    ["1987 · Il “Lunedì nero”", "Il 19 ottobre 1987 il Dow Jones perse circa il 22% in un solo giorno, il calo giornaliero più grande della storia. Circa due anni dopo era tornato ai livelli di prima."],
+    ["2000–2002 · La bolla di Internet", "Le aziende internet erano salite troppo, sull'entusiasmo. L'S&P 500 perse circa il 49% e il Nasdaq quasi l'80%. Ci vollero anni per recuperare."],
+    ["2008–2009 · La crisi finanziaria", "Crisi delle banche e dei mutui. L'S&P 500 perse circa il 57% dal punto più alto. Tornò ai livelli di prima nel 2013."],
+    ["2020 · Il Covid", "Tra febbraio e marzo 2020 l'S&P 500 perse circa il 34% in poco più di un mese. Ad agosto 2020 aveva già recuperato tutto."],
+    ["2022 · Inflazione e tassi alti", "Salirono i prezzi e i tassi di interesse. L'S&P 500 perse circa il 25%. A inizio 2024 era tornato ai massimi."],
+  ],
+  momentsNote: "In media, nel lungo periodo, l'S&P 500 è cresciuto di circa il 10% l'anno (prima dell'inflazione), ma con anni molto buoni e anni molto brutti.",
+  marketHome: "🌍 Com'è andato il mercato oggi?",
+  accountHistory: "Il tuo conto nel tempo",
+  histRanges: { "1W": "1 sett.", "1M": "1 mese", "3M": "3 mesi", "1A": "1 anno" },
+  histSentence: (a, b, up, p) => `In questo periodo il tuo conto è passato da <b>${a}</b> a <b>${b}</b>: ` +
+    (up ? `<b class="t-up">+${p}</b>` : `<b class="t-down">−${p}</b>`) + ".",
+  histEmpty: "Il grafico apparirà dopo qualche giorno di utilizzo del conto.",
+  adviceBtn: "💡 Consigli per te", myTrades: "🧾 Le mie operazioni",
+  adviceTitle: "Consigli per te",
+  adviceIntro: "Ecco cosa noto guardando il tuo conto di prova:",
+  adv: {
+    empty: ["🌱", "Non hai ancora investito niente.", "Un buon primo passo: un piccolo acquisto di prova di SPY, il fondo che contiene le 500 aziende più grandi. Così segui “tutto il mercato” invece di una sola azienda."],
+    few: n => ["🧺", `Possiedi solo ${n} ${n === 1 ? "azienda" : "aziende diverse"}.`, "Mettere tutte le uova nello stesso paniere è rischioso. Prova a dividere i soldi su più aziende di settori diversi, o su un fondo come SPY."],
+    concentrated: (name, p) => ["⚖️", `${name} è il ${p} dei tuoi investimenti.`, "È molto su una sola azienda: se va male, ne risente tutto il conto. Spesso si consiglia che nessuna azione superi il 20–25%."],
+    cash: p => ["💵", `Il ${p} del conto è ancora in contanti.`, "Va bene andare piano. Ma i contanti non crescono: puoi provare a investire una parte un po' alla volta, per esempio la stessa cifra ogni mese."],
+    loser: (name, p) => ["📉", `${name} è in calo del ${p} da quando l'hai comprata.`, "È normale che un'azione scenda. Prima di vendere per paura chiediti: è cambiato qualcosa nell'azienda, o è solo il mercato che si muove?"],
+    winner: (name, p) => ["📈", `${name} è salita del ${p} da quando l'hai comprata.`, "Bene! Alcuni investitori a questo punto vendono una parte per “mettere al sicuro” il guadagno e tengono il resto."],
+    busy: n => ["⏱️", `Hai fatto ${n} operazioni negli ultimi 7 giorni.`, "Comprare e vendere troppo spesso di solito fa guadagnare meno. Chi investe con successo spesso compra e tiene per anni."],
+    good: ["✅", "Il tuo conto di prova è ben diviso.", "Continua così: pazienza e diversificazione sono le due regole più importanti."],
+  },
+  planTitle: "Un piano semplice per chi inizia",
+  plan: [
+    "Fai pratica qui con i soldi finti per almeno 2–3 mesi.",
+    "Investi solo soldi che non ti servono per almeno 5 anni.",
+    "Preferisci fondi che contengono tante aziende (come SPY) alle singole azioni.",
+    "Investi un po' alla volta, per esempio ogni mese, invece che tutto in una volta.",
+    "Non farti prendere dal panico quando il mercato scende: è già successo tante volte.",
+    "Prima di usare soldi veri, parla con un consulente finanziario abilitato.",
+  ],
+  adviceDisclaimer: "Sono consigli generali per imparare, calcolati in automatico sul conto di prova. Non sono consigli finanziari personali.",
+  companies: {
+    AAPL: "Fa iPhone, Mac, iPad e altri prodotti elettronici.", MSFT: "Fa Windows, Office e servizi cloud per le aziende.",
+    AMZN: "Il più grande negozio online del mondo, e servizi cloud.", GOOGL: "Possiede Google, YouTube e Android.",
+    NVDA: "Fa chip per computer, usati per l'intelligenza artificiale e i videogiochi.", META: "Possiede Facebook, Instagram e WhatsApp.",
+    TSLA: "Fa auto elettriche e batterie.", NFLX: "Film e serie TV in streaming.", KO: "Bevande come Coca-Cola, Fanta e Sprite.",
+    PEP: "Pepsi, patatine e altri snack.", MCD: "Ristoranti McDonald's in tutto il mondo.", DIS: "Parchi Disney, film (Marvel, Pixar) e Disney+.",
+    NKE: "Scarpe e abbigliamento sportivo.", V: "Il circuito delle carte di pagamento Visa.", JPM: "La più grande banca americana.",
+    JNJ: "Medicinali e prodotti per la salute.", PFE: "Medicinali e vaccini.", WMT: "La più grande catena di supermercati americana.",
+    COST: "Grandi magazzini dove si compra all'ingrosso.", PG: "Prodotti per la casa e la persona, come Dash, Gillette e Pampers.",
+    XOM: "Petrolio e gas.", BA: "Aerei, come il Boeing 737.", RACE: "Auto sportive di lusso, fatte a Maranello.",
+    STLA: "Auto: Fiat, Alfa Romeo, Jeep, Peugeot e altri marchi.", E: "Energia italiana: petrolio, gas e rinnovabili.",
+    SPY: "Un fondo che contiene le 500 più grandi aziende americane. Comprarlo è come comprare un pezzetto di tutte.",
+    DIA: "Un fondo con le 30 aziende del Dow Jones.", QQQ: "Un fondo con 100 grandi aziende, soprattutto di tecnologia.",
+  },
+});
+
+Object.assign(TEXT.en, {
+  tabMarket: "Market",
+  ranges: { "1M": "1 month", "6M": "6 months", "1Y": "1 year", "5Y": "5 years", "MAX": "All" },
+  chartSentence: (r, name, a, b, up, p, from) => {
+    const when = { "1M": "Over the past month", "6M": "Over the past 6 months", "1Y": "Over the past year", "5Y": "Over the past 5 years", "MAX": `From ${from} to today` }[r];
+    return `${when}, ${name} went from <b>${a}</b> to <b>${b}</b>: ` +
+      (up ? `<b class="t-up">up ${p}</b>.` : `<b class="t-down">down ${p}</b>.`);
+  },
+  ifInvested: (amt, val) => `💡 If you had invested <b>${amt}</b> at the start of this period, today you'd have about <b>${val}</b>.`,
+  aboutCompany: "What this company does",
+  marketTitle: "The market today",
+  moods: [["⛈️", "A rough day"], ["🌧️", "A down day"], ["⛅", "A quiet day"], ["🌤️", "A good day"], ["☀️", "A very good day"]],
+  marketSummary: (up, p) => `Today the 500 largest US companies, taken together, are ${up ? "up" : "down"} <b>${p}</b>.`,
+  flatSummary: "Today the 500 largest US companies, taken together, are barely moving.",
+  normalMove: "Moves like this are normal and happen almost every day.",
+  bigMove: "That's a big move: it happens a few times a year. Over the long run, single days matter little.",
+  lastSession: "The market is closed: these are the numbers from the last trading day.",
+  indexesTitle: "The three “thermometers” of the US market",
+  indexes: { SPY: ["S&P 500", "The 500 largest US companies. The most-watched thermometer."],
+    DIA: ["Dow Jones", "30 famous, long-established companies like Coca-Cola and McDonald's."],
+    QQQ: ["Nasdaq 100", "100 big companies, mostly technology."] },
+  sectorsTitle: "How each sector is doing",
+  sectorsHint: "A sector is a group of companies that do similar things.",
+  sectors: { XLK: "💻 Technology", XLV: "🏥 Health", XLF: "🏦 Banks & finance", XLE: "⛽ Energy & oil", XLP: "🛒 Everyday goods",
+    XLY: "🛍️ Shopping & cars", XLI: "🏭 Industry", XLU: "💡 Power, gas & water", XLRE: "🏢 Real estate", XLC: "📱 Communication & media", XLB: "⛏️ Materials" },
+  moversTitle: "Famous companies: biggest moves today",
+  winners: "▲ Best", losers: "▼ Worst",
+  longTitle: "The market's history",
+  longSentence: (from, a, b, up, p) => `From ${from} to today the S&P 500 went from <b>${a}</b> to <b>${b}</b>: ` +
+    (up ? `<b class="t-up">+${p}</b>.` : `<b class="t-down">−${p}</b>.`),
+  thousand: (from, v) => `💡 <b>$1,000</b> invested in ${from} would be worth about <b>${v}</b> today.`,
+  drawdown: (p, when) => `📉 The biggest drop in this period was <b>${p}</b> (${when}).`,
+  recovered: m => ` The market then recovered all of it in about <b>${m} months</b>.`,
+  notRecovered: " It hasn't fully recovered yet.",
+  lessonLong: "The lesson: in the short run the market goes up and down, but over the long run it has grown. That's why patience matters.",
+  momentsTitle: "Famous moments in history",
+  moments: [
+    ["1987 · “Black Monday”", "On October 19, 1987 the Dow Jones lost about 22% in a single day, the biggest one-day drop ever. About two years later it was back where it had been."],
+    ["2000–2002 · The dot-com bubble", "Internet companies had risen too far on excitement. The S&P 500 lost about 49% and the Nasdaq almost 80%. It took years to recover."],
+    ["2008–2009 · The financial crisis", "A banking and mortgage crisis. The S&P 500 fell about 57% from its peak. It got back to its old level in 2013."],
+    ["2020 · Covid", "In February–March 2020 the S&P 500 lost about 34% in just over a month. By August 2020 it had recovered all of it."],
+    ["2022 · Inflation and high rates", "Prices and interest rates rose. The S&P 500 lost about 25%. By early 2024 it was back at record highs."],
+  ],
+  momentsNote: "On average over the long run, the S&P 500 has grown about 10% a year (before inflation), but with some very good and some very bad years.",
+  marketHome: "🌍 How did the market do today?",
+  accountHistory: "Your account over time",
+  histRanges: { "1W": "1 week", "1M": "1 month", "3M": "3 months", "1A": "1 year" },
+  histSentence: (a, b, up, p) => `In this period your account went from <b>${a}</b> to <b>${b}</b>: ` +
+    (up ? `<b class="t-up">+${p}</b>` : `<b class="t-down">−${p}</b>`) + ".",
+  histEmpty: "The chart will appear after the account has been used for a few days.",
+  adviceBtn: "💡 Tips for you", myTrades: "🧾 My trades",
+  adviceTitle: "Tips for you",
+  adviceIntro: "Here's what I notice in your practice account:",
+  adv: {
+    empty: ["🌱", "You haven't invested anything yet.", "A good first step: a small practice purchase of SPY, the fund that holds the 500 largest companies. That way you follow “the whole market” instead of one company."],
+    few: n => ["🧺", `You only own ${n} ${n === 1 ? "company" : "different companies"}.`, "Putting all your eggs in one basket is risky. Try spreading money across companies in different sectors, or a fund like SPY."],
+    concentrated: (name, p) => ["⚖️", `${name} is ${p} of your investments.`, "That's a lot in one company: if it does badly, your whole account feels it. A common rule is that no single stock should be more than 20–25%."],
+    cash: p => ["💵", `${p} of your account is still cash.`, "Going slowly is fine. But cash doesn't grow: you could invest a part a little at a time, for example the same amount every month."],
+    loser: (name, p) => ["📉", `${name} is down ${p} since you bought it.`, "It's normal for a stock to drop. Before selling out of fear, ask: did something change at the company, or is it just the market moving?"],
+    winner: (name, p) => ["📈", `${name} is up ${p} since you bought it.`, "Nice! Some investors sell a part at this point to “lock in” the gain and keep the rest."],
+    busy: n => ["⏱️", `You made ${n} trades in the last 7 days.`, "Buying and selling too often usually earns less. Successful investors often buy and hold for years."],
+    good: ["✅", "Your practice account is well spread out.", "Keep it up: patience and diversification are the two most important rules."],
+  },
+  planTitle: "A simple plan for beginners",
+  plan: [
+    "Practice here with pretend money for at least 2–3 months.",
+    "Only invest money you won't need for at least 5 years.",
+    "Prefer funds that hold many companies (like SPY) over single stocks.",
+    "Invest a little at a time, for example every month, instead of all at once.",
+    "Don't panic when the market drops: it has happened many times before.",
+    "Before using real money, talk to a licensed financial advisor.",
+  ],
+  adviceDisclaimer: "These are general learning tips, worked out automatically from the practice account. They are not personal financial advice.",
+  companies: {
+    AAPL: "Makes iPhones, Macs, iPads and other electronics.", MSFT: "Makes Windows, Office and cloud services for businesses.",
+    AMZN: "The world's biggest online store, plus cloud services.", GOOGL: "Owns Google, YouTube and Android.",
+    NVDA: "Makes computer chips used for artificial intelligence and video games.", META: "Owns Facebook, Instagram and WhatsApp.",
+    TSLA: "Makes electric cars and batteries.", NFLX: "Streaming movies and TV series.", KO: "Drinks like Coca-Cola, Fanta and Sprite.",
+    PEP: "Pepsi, chips and other snacks.", MCD: "McDonald's restaurants around the world.", DIS: "Disney parks, movies (Marvel, Pixar) and Disney+.",
+    NKE: "Sports shoes and clothing.", V: "The Visa payment card network.", JPM: "The largest US bank.",
+    JNJ: "Medicines and health products.", PFE: "Medicines and vaccines.", WMT: "The largest US supermarket chain.",
+    COST: "Warehouse stores that sell in bulk.", PG: "Household and personal products like Tide, Gillette and Pampers.",
+    XOM: "Oil and gas.", BA: "Airplanes, like the Boeing 737.", RACE: "Luxury sports cars, made in Maranello, Italy.",
+    STLA: "Cars: Fiat, Alfa Romeo, Jeep, Peugeot and other brands.", E: "Italian energy company: oil, gas and renewables.",
+    SPY: "A fund holding the 500 largest US companies. Buying it is like buying a small piece of all of them.",
+    DIA: "A fund holding the 30 Dow Jones companies.", QQQ: "A fund holding 100 big companies, mostly technology.",
+  },
+});
+
 // ---------- small helpers ----------
 const $ = sel => document.querySelector(sel);
 const view = $("#view");
@@ -329,7 +520,7 @@ const demo = (() => {
   const pos = { RACE: { qty: 1.5, cost: 380 }, KO: { qty: 15, cost: 58.2 } };
   const orders = [];
   const quote = sym => {
-    const [name, price] = info[sym] || [sym, 50];
+    const [name, price] = info[sym] || [COMPANY_NAMES[sym] || sym, 20 + seed(sym)() * 300];
     const prev = price * (1 + (seed(sym + "q")() - 0.5) * 0.04);
     return { symbol: sym, name, price, prevClose: prev, change: price - prev, changePct: (price - prev) / prev * 100 };
   };
@@ -353,6 +544,12 @@ const demo = (() => {
       }
       if (action === "positions") return positions();
       if (action === "orders") return orders.slice().reverse();
+      if (action === "history") {
+        const n = { "1W": 5, "1M": 21, "3M": 63, "1A": 250 }[p.period] || 21, rnd = seed("hist" + p.period), out = [];
+        let v = 10000 + positions().reduce((s, x) => s + +x.market_value, 0) - (cash < 10000 ? 0 : 0);
+        for (let i = 0; i < n; i++) { out.push(v); v = v / (1 + (rnd() - 0.47) * 0.01); }
+        return out.reverse().map((c, i) => ({ t: new Date(Date.now() - (n - i) * 864e5).toISOString(), c }));
+      }
       if (action === "quotes") return p.symbols.split(",").map(quote);
       if (action === "search") {
         const t = p.q.toLowerCase();
@@ -360,11 +557,11 @@ const demo = (() => {
           .map(([symbol, [name]]) => ({ symbol, name }));
       }
       if (action === "bars") {
-        const n = { "1M": 22, "6M": 126, "1Y": 252, "5Y": 260 }[p.range] || 252;
-        const days = { "1M": 31, "6M": 183, "1Y": 366, "5Y": 1830 }[p.range] || 366;
+        const n = { "1M": 22, "6M": 126, "1Y": 252, "5Y": 260, "MAX": 520 }[p.range] || 252;
+        const days = { "1M": 31, "6M": 183, "1Y": 366, "5Y": 1830, "MAX": 3650 }[p.range] || 366;
         const rnd = seed(p.symbol + p.range), out = [];
         let v = quote(p.symbol).price;
-        for (let i = 0; i < n; i++) { out.push(v); v = v / (1 + (rnd() - 0.48) * (p.range === "5Y" ? 0.05 : 0.025)); }
+        for (let i = 0; i < n; i++) { out.push(v); v = v / (1 + (rnd() - 0.48) * (p.range === "5Y" || p.range === "MAX" ? 0.05 : 0.025)); }
         return out.reverse().map((c, i) => ({ t: new Date(Date.now() - (n - i) / n * days * 864e5).toISOString(), c }));
       }
       throw new Error("Unknown");
@@ -396,7 +593,7 @@ const demo = (() => {
 // Names cache so we can show "Ferrari" not "RACE"
 const names = store("names") || {};
 const rememberNames = list => { list.forEach(x => { if (x.name) names[x.symbol] = x.name; }); store("names", names); };
-const nameOf = sym => names[sym] || sym;
+const nameOf = sym => names[sym] || COMPANY_NAMES[sym] || sym;
 
 // ---------- market status pill ----------
 async function refreshMarket() {
@@ -433,13 +630,21 @@ async function screenHome() {
 
     view.innerHTML = `
       <h2>${greeting()}!</h2>
-      <div class="card hero">
+      <div class="card hero balance">
         <div class="muted">${T().worth}</div>
         <div class="big">${money(equity)}</div>
         ${eurSmall(equity)}
         <div style="margin-top:.4rem">${changeBadge(dayChg, dayPct)}</div>
         <p class="small muted" style="margin-top:.7rem">${T().cash}: <b>${moneyBoth(+acct.cash)}</b></p>
       </div>
+      <div class="row">
+        <a class="btn" href="#market">${T().marketHome}</a>
+      </div>
+      <div class="row">
+        <a class="btn secondary" href="#advice">${T().adviceBtn}</a>
+        <a class="btn secondary" href="#history">${T().myTrades}</a>
+      </div>
+      <div class="card" id="acct-history"></div>
       <div class="card notice small">${T().practice}
         ${clock && !clock.is_open ? "<br>" + T().closedNote(openTime()) : ""}</div>
 
@@ -454,6 +659,7 @@ async function screenHome() {
         : `<div class="card"><p>${T().noneOwned}</p><p class="muted">${T().noneOwnedHint}</p></div>`}
 
       <a class="btn" href="#stocks">${T().lookup}</a>`;
+    drawAccountHistory($("#acct-history"));
   } catch (e) { view.innerHTML = errorBox(e); }
 }
 
@@ -497,17 +703,24 @@ async function screenStocks() {
   refreshMarket();
 }
 
+let chartId = 0;
 function chartSVG(bars, up) {
-  const W = 600, H = 260, P = 6;
+  const W = 600, H = 240, P = 8, id = "g" + (++chartId);
   const vals = bars.map(b => b.c);
   const min = Math.min(...vals), max = Math.max(...vals), span = max - min || 1;
   const pts = vals.map((v, i) => [P + i * (W - 2 * P) / Math.max(vals.length - 1, 1), P + (H - 2 * P) * (1 - (v - min) / span)]);
   const line = pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ");
   const col = up ? "var(--up)" : "var(--down)";
+  const [ex, ey] = pts.at(-1);
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" aria-hidden="true">
-    <polygon points="${P},${H - P} ${line} ${W - P},${H - P}" fill="${col}" opacity=".12"/>
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".28"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${[0.25, 0.5, 0.75].map(f => `<line x1="0" x2="${W}" y1="${H * f}" y2="${H * f}" stroke="var(--line)" stroke-dasharray="4 6"/>`).join("")}
+    <polygon points="${P},${H} ${line} ${W - P},${H}" fill="url(#${id})"/>
     <polyline points="${line}" fill="none" stroke="${col}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="7" fill="${col}"/>
+    <circle cx="${ex}" cy="${ey}" r="13" fill="${col}" opacity=".18"/>
+    <circle cx="${ex}" cy="${ey}" r="7" fill="${col}" stroke="var(--card)" stroke-width="3"/>
   </svg>`;
 }
 
@@ -521,7 +734,7 @@ async function screenStock(sym) {
     const range = store("range") || "1Y";
 
     view.innerHTML = `
-      <a href="javascript:history.back()" class="muted">${T().back}</a>
+      <a href="javascript:history.back()" class="back">${T().back}</a>
       <div class="card hero">
         <h2 style="margin:0">${esc(q.name)}</h2>
         <div class="muted small">${T().symbol}: ${esc(sym)}</div>
@@ -530,6 +743,8 @@ async function screenStock(sym) {
         <div class="muted small">${T().oneShare}</div>
         <div style="margin-top:.4rem">${changeBadge(q.change, q.changePct)}</div>
       </div>
+
+      ${T().companies[sym] ? `<div class="card about"><h3>${T().aboutCompany}</h3><p>${esc(T().companies[sym])}</p></div>` : ""}
 
       <div class="card">
         <div class="chips range" role="group">
@@ -566,7 +781,8 @@ async function screenStock(sym) {
         const d = s => new Date(s).toLocaleDateString(LOC(), { month: "short", year: "numeric", ...(r === "1M" ? { day: "numeric" } : {}) });
         $("#chart").innerHTML = chartSVG(bars, diff >= 0) +
           `<div class="chart-labels"><span>${d(bars[0].t)}</span><span>${T().todayLabel}</span></div>
-           <p style="margin-top:.7rem">${T().chartSentence(r, esc(q.name), money(first), money(last), diff >= 0, pct(diff / first * 100))}</p>
+           <p style="margin-top:.7rem">${T().chartSentence(r, esc(q.name), money(first), money(last), diff >= 0, pct(diff / first * 100), d(bars[0].t))}</p>
+           <p class="tip">${T().ifInvested(money(1000, 0), moneyBoth(1000 * last / first))}</p>
            <p class="small muted">${T().low}: ${money(Math.min(...bars.map(b => b.c)))} · ${T().high}: ${money(Math.max(...bars.map(b => b.c)))}</p>`;
       } catch (e) { $("#chart").innerHTML = errorBox(e); }
     };
@@ -587,7 +803,7 @@ async function screenTrade(sym, side) {
     const presets = [50, 100, 250, 500, 1000].filter(v => v <= max);
 
     view.innerHTML = `
-      <a href="#stock/${esc(sym)}" class="muted">${T().back}</a>
+      <a href="#stock/${esc(sym)}" class="back">${T().back}</a>
       <h2>${isBuy ? T().buy : T().sell} ${esc(q.name)}</h2>
       <div class="card"><div class="kv"><span>${T().pricePerShare}</span><b>${moneyBoth(q.price)}</b></div>
         <div class="kv"><span>${isBuy ? T().cashHave : T().sharesWorth}</span><b>${moneyBoth(max)}</b></div></div>
@@ -653,7 +869,7 @@ async function screenHistory() {
   loading();
   try {
     const orders = await api.get("orders");
-    view.innerHTML = `<h2>${T().historyTitle}</h2>` + (orders.length ? orders.map(o => {
+    view.innerHTML = `<a href="#home" class="back">${T().back}</a><h2>${T().historyTitle}</h2>` + (orders.length ? orders.map(o => {
       const amt = o.notional ? +o.notional : (+o.filled_qty || +o.qty || 0) * (+o.filled_avg_price || 0);
       return `<div class="card">
         <h3>${o.side === "buy" ? T().bought : T().sold} ${esc(nameOf(o.symbol))}</h3>
@@ -701,10 +917,167 @@ function screenSettings() {
   $("#resetWatch").onclick = () => { watchlist = DEFAULT_WATCH.slice(); saveWatch(); $("#resetWatch").textContent = T().doneShort; };
 }
 
+// ---------- market, history and advice ----------
+function moodFor(p) {
+  const m = T().moods;
+  return p <= -1 ? m[0] : p <= -0.2 ? m[1] : p < 0.2 ? m[2] : p < 1 ? m[3] : m[4];
+}
+
+function pctPill(p) {
+  if (p == null || isNaN(p)) return `<span class="pill flat">—</span>`;
+  const cls = p > 0.005 ? "up" : p < -0.005 ? "down" : "flat";
+  return `<span class="pill ${cls}">${p > 0.005 ? "▲" : p < -0.005 ? "▼" : "●"} ${pct(p)}</span>`;
+}
+
+function maxDrawdown(bars) {
+  let peak = bars[0], best = null;
+  bars.forEach((b, i) => {
+    if (b.c > peak.c) peak = b;
+    const dd = (b.c - peak.c) / peak.c;
+    if (!best || dd < best.dd) best = { dd, peak, trough: b, i };
+  });
+  if (!best || best.dd > -0.05) return null;
+  best.rec = bars.slice(best.i).find(b => b.c >= best.peak.c) || null;
+  return best;
+}
+
+const monthYear = s => new Date(s).toLocaleDateString(LOC(), { month: "long", year: "numeric" });
+
+async function screenMarket() {
+  loading();
+  try {
+    const syms = [...INDEXES, ...SECTORS, ...POPULAR];
+    const [qs, clock] = await Promise.all([api.get("quotes", { symbols: syms.join(",") }), refreshMarket()]);
+    const by = Object.fromEntries(qs.map(q => [q.symbol, q]));
+    const spy = by.SPY || {};
+    const p = spy.changePct ?? 0;
+    const [icon, mood] = moodFor(p);
+    const summary = Math.abs(p) < 0.05 ? T().flatSummary : T().marketSummary(p > 0, pct(p));
+
+    const sectors = SECTORS.map(s => by[s]).filter(q => q && q.changePct != null).sort((a, b) => b.changePct - a.changePct);
+    const maxAbs = Math.max(0.5, ...sectors.map(q => Math.abs(q.changePct)));
+    const pop = POPULAR.map(s => by[s]).filter(q => q && q.changePct != null).sort((a, b) => b.changePct - a.changePct);
+    const moverRow = q => `<a class="mini" href="#stock/${esc(q.symbol)}"><span>${esc(nameOf(q.symbol))}</span>${pctPill(q.changePct)}</a>`;
+
+    view.innerHTML = `
+      <h2>${T().marketTitle}</h2>
+      <div class="card hero mood ${p > 0.2 ? "good" : p < -0.2 ? "bad" : "calm"}">
+        <div class="mood-icon" aria-hidden="true">${icon}</div>
+        <div class="mood-title">${mood}</div>
+        <p class="lead">${summary}</p>
+        <p class="small">${Math.abs(p) >= 2 ? T().bigMove : T().normalMove}</p>
+        ${clock && !clock.is_open ? `<p class="small muted">${T().lastSession}</p>` : ""}
+      </div>
+
+      <h2>${T().indexesTitle}</h2>
+      ${INDEXES.map(s => { const q = by[s] || {}; const [n, d] = T().indexes[s]; return `
+        <a class="card stock" href="#stock/${s}">
+          <div><div class="name">${n}</div><div class="sym">${d}</div></div>
+          <div class="right">${pctPill(q.changePct)}</div>
+        </a>`; }).join("")}
+
+      <h2>${T().sectorsTitle}</h2>
+      <p class="small muted">${T().sectorsHint}</p>
+      <div class="card">
+        ${sectors.map(q => `<div class="bar-row">
+          <span class="bar-label">${T().sectors[q.symbol]}</span>
+          <span class="bar-track"><span class="bar ${q.changePct >= 0 ? "up" : "down"}" style="width:${Math.max(4, Math.abs(q.changePct) / maxAbs * 100).toFixed(0)}%"></span></span>
+          <span class="bar-val ${q.changePct >= 0 ? "t-up" : "t-down"}">${q.changePct >= 0 ? "+" : "−"}${pct(q.changePct)}</span>
+        </div>`).join("")}
+      </div>
+
+      <h2>${T().moversTitle}</h2>
+      <div class="two-col">
+        <div class="card"><h3 class="t-up">${T().winners}</h3>${pop.slice(0, 4).map(moverRow).join("")}</div>
+        <div class="card"><h3 class="t-down">${T().losers}</h3>${pop.slice(-4).reverse().map(moverRow).join("")}</div>
+      </div>
+
+      <h2>${T().longTitle}</h2>
+      <div class="card" id="longrun"><div class="spinner">${T().drawing}</div></div>
+
+      <h2>${T().momentsTitle}</h2>
+      ${T().moments.map(([q, a]) => `<details class="learn"><summary>${esc(q)}</summary><div><p>${esc(a)}</p></div></details>`).join("")}
+      <p class="small muted">${T().momentsNote}</p>`;
+
+    try {
+      const bars = await api.get("bars", { symbol: "SPY", range: "MAX" });
+      if (bars.length < 10) throw new Error("no data");
+      const first = bars[0].c, last = spy.price ?? bars.at(-1).c, from = monthYear(bars[0].t), growth = last / first;
+      const dd = maxDrawdown(bars);
+      let ddText = "";
+      if (dd) {
+        ddText = T().drawdown(pct(dd.dd * 100), monthYear(dd.trough.t)) +
+          (dd.rec ? T().recovered(Math.max(1, Math.round((new Date(dd.rec.t) - new Date(dd.trough.t)) / (30.4 * 864e5)))) : T().notRecovered);
+      }
+      $("#longrun").innerHTML = chartSVG(bars, last >= first) +
+        `<div class="chart-labels"><span>${esc(from)}</span><span>${T().todayLabel}</span></div>
+         <p>${T().longSentence(esc(from), money(first), money(last), last >= first, pct(Math.abs(growth - 1) * 100))}</p>
+         <p class="tip">${T().thousand(esc(from), moneyBoth(1000 * growth))}</p>
+         ${ddText ? `<p>${ddText}</p>` : ""}
+         <p class="small muted">${T().lessonLong}</p>`;
+    } catch (e) { $("#longrun").innerHTML = `<p class="muted">${T().noChart}</p>`; }
+  } catch (e) { view.innerHTML = errorBox(e); }
+}
+
+async function drawAccountHistory(el) {
+  const range = store("hrange") || "1M";
+  el.innerHTML = `
+    <h3>${T().accountHistory}</h3>
+    <div class="chips range" role="group">${Object.keys(T().histRanges).map(r =>
+      `<button class="chip" data-hrange="${r}" aria-pressed="${r === range}">${T().histRanges[r]}</button>`).join("")}</div>
+    <div id="hchart"><div class="spinner">${T().drawing}</div></div>`;
+  el.querySelectorAll("[data-hrange]").forEach(b => b.onclick = () => { store("hrange", b.dataset.hrange); drawAccountHistory(el); });
+  try {
+    const pts = await api.get("history", { period: range });
+    if (pts.length < 2) { $("#hchart").innerHTML = `<p class="muted">${T().histEmpty}</p>`; return; }
+    const a = pts[0].c, b = pts.at(-1).c;
+    $("#hchart").innerHTML = chartSVG(pts, b >= a) +
+      `<p>${T().histSentence(money(a), money(b), b >= a, pct(Math.abs(b - a) / a * 100))}</p>`;
+  } catch { $("#hchart").innerHTML = `<p class="muted">${T().histEmpty}</p>`; }
+}
+
+async function screenAdvice() {
+  loading();
+  try {
+    const [acct, positions, orders] = await Promise.all([api.get("account"), api.get("positions"), api.get("orders")]);
+    const equity = +acct.equity, cash = +acct.cash;
+    const pos = positions.map(p => {
+      const cost = +p.qty * +p.avg_entry_price;
+      return { sym: p.symbol, mv: +p.market_value, pl: cost ? (+p.market_value - cost) / cost * 100 : 0 };
+    });
+    const invested = pos.reduce((s, p) => s + p.mv, 0);
+    const A = T().adv, items = [];
+    const pct = n => Math.round(Math.abs(n)) + "%";
+    if (!pos.length) items.push(A.empty);
+    else {
+      if (pos.length < 3) items.push(A.few(pos.length));
+      const top = pos.reduce((m, p) => (p.mv > m.mv ? p : m));
+      if (pos.length >= 2 && top.mv / invested > 0.4) items.push(A.concentrated(nameOf(top.sym), pct(top.mv / invested * 100)));
+      if (equity && cash / equity > 0.7) items.push(A.cash(pct(cash / equity * 100)));
+      pos.filter(p => p.pl <= -15).slice(0, 2).forEach(p => items.push(A.loser(nameOf(p.sym), pct(-p.pl))));
+      pos.filter(p => p.pl >= 25).slice(0, 2).forEach(p => items.push(A.winner(nameOf(p.sym), pct(p.pl))));
+    }
+    const recent = orders.filter(o => Date.now() - new Date(o.submitted_at) < 7 * 864e5).length;
+    if (recent >= 8) items.push(A.busy(recent));
+    if (!items.length) items.push(A.good);
+
+    view.innerHTML = `
+      <a href="#home" class="back">${T().back}</a>
+      <h2>${T().adviceTitle}</h2>
+      <p class="muted">${T().adviceIntro}</p>
+      ${items.map(([icon, title, body]) => `
+        <div class="card advice"><div class="advice-icon" aria-hidden="true">${icon}</div>
+          <div><h3>${esc(title)}</h3><p>${esc(body)}</p></div></div>`).join("")}
+      <h2>${T().planTitle}</h2>
+      <div class="card"><ol class="plan">${T().plan.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
+      <p class="small muted">${T().adviceDisclaimer}</p>`;
+  } catch (e) { view.innerHTML = errorBox(e); }
+}
+
 // ---------- router ----------
 function route() {
   const [tab, a, b] = (location.hash.slice(1) || "home").split("/");
-  const active = tab === "stock" || tab === "trade" ? "stocks" : tab;
+  const active = tab === "stock" || tab === "trade" ? "stocks" : tab === "history" || tab === "advice" ? "home" : tab;
   document.querySelectorAll(".tabs a").forEach(l => {
     if (l.dataset.tab === active) l.setAttribute("aria-current", "page");
     else l.removeAttribute("aria-current");
@@ -715,6 +1088,8 @@ function route() {
   if (tab === "stock" && sym) return screenStock(sym);
   if (tab === "trade" && sym) return screenTrade(sym, b === "sell" ? "sell" : "buy");
   if (tab === "history") return screenHistory();
+  if (tab === "market") return screenMarket();
+  if (tab === "advice") return screenAdvice();
   if (tab === "learn") return screenLearn();
   if (tab === "settings") return screenSettings();
   return screenHome();
